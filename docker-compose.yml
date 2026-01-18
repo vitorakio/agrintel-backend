@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    container_name: agriintel-db
+    environment:
+      POSTGRES_DB: agriintel
+      POSTGRES_USER: agriintel
+      POSTGRES_PASSWORD: agriintel
+    ports:
+      - '5432:5432'
+    volumes:
+      - agriintel_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U agriintel -d agriintel']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  agriintel_pgdata:
