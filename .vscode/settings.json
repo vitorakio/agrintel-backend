@@ -1,0 +1,11 @@
+{
+  // Mantém o ESLint focado em JS/TS e evita tentar validar arquivos do Prisma.
+  "eslint.useFlatConfig": true,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.workingDirectories": [{ "mode": "auto" }]
+}

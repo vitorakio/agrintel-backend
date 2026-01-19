@@ -7,7 +7,8 @@ datasource db {
 }
 
 model Farm {
-  id        String   @id @default(uuid())
+  id        Int   @id @default(autoincrement())
   name      String
+  location  String?
   createdAt DateTime @default(now())
 }
