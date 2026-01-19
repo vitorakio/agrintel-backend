@@ -1,5 +1,4 @@
 {
-  // Mantém o ESLint focado em JS/TS e evita tentar validar arquivos do Prisma.
   "eslint.useFlatConfig": true,
   "eslint.experimental.useFlatConfig": true,
   "eslint.validate": [
@@ -9,8 +8,8 @@
     "typescriptreact"
   ],
   "eslint.workingDirectories": [{ "mode": "auto" }],
-
-  // Evita rodar formatter + eslint fix em duplicidade no save.
+  "eslint.nodePath": "node_modules",
+  "eslint.packageManager": "yarn",
   "editor.formatOnSave": false,
   "eslint.format.enable": false,
   "editor.codeActionsOnSave": {

@@ -1,12 +1,20 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { CreateFarmDto, UpdateFarmDto } from './dto/farms.dto';
+import { CreateFarmDto, UpdateFarmDto } from '../../dtos/farms.dto';
 
 @Injectable()
 export class FarmsService {
   constructor(private readonly prisma: PrismaService) {}
 
   create(dto: CreateFarmDto) {
+    if (!dto) {
+      throw new BadRequestException('Request body is required');
+    }
+
     return this.prisma.farm.create({
       data: { name: dto.name, location: dto.location },
     });

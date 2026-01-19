@@ -6,6 +6,7 @@ import { RequestLoggerMiddleware } from './request.middleware'
 import { ConfigModule } from '@nestjs/config'
 import { PrismaModule } from './prisma/prisma.module'
 import { FarmsModule } from './modules/farms/farms.module'
+import { FieldsModule } from './modules/fields/fields.module'
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { FarmsModule } from './modules/farms/farms.module'
     }),
     PrismaModule,
     FarmsModule,
+    FieldsModule,
   ],
   controllers: [AppController, HealthController],
   providers: [AppService],

@@ -7,8 +7,22 @@ datasource db {
 }
 
 model Farm {
-  id        Int   @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   name      String
   location  String?
   createdAt DateTime @default(now())
+
+  fields    Field[]
+}
+
+model Field {
+  id        Int      @id @default(autoincrement())
+  name      String
+  hectares  Float
+  createdAt DateTime @default(now())
+
+  farmId    Int
+  farm      Farm     @relation(fields: [farmId], references: [id])
+
+  @@index([farmId])
 }

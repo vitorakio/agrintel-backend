@@ -5,10 +5,11 @@ import {
   Get,
   Param,
   Patch,
+  ParseIntPipe,
   Post,
 } from '@nestjs/common';
 import { FarmsService } from './farms.service';
-import { CreateFarmDto, UpdateFarmDto } from './dto/farms.dto';
+import { CreateFarmDto, UpdateFarmDto } from '../../dtos/farms.dto';
 
 @Controller('farms')
 export class FarmsController {
@@ -25,17 +26,17 @@ export class FarmsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.service.findOne(Number(id));
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.service.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() dto: UpdateFarmDto) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateFarmDto) {
     return this.service.update(id, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.service.remove(id);
   }
 }

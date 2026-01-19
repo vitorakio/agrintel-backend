@@ -9,6 +9,7 @@ module.exports = {
   extends: [
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
+    './tsconfig.json'
   ],
   root: true,
   env: {
@@ -24,4 +25,6 @@ module.exports = {
     'nonblock-statement-body-position': ['error', 'beside'],
     'block-spacing': ['error', 'never'],
   },
+  include: ["src/**/*.ts", "test/**/*.ts", "prisma/**/*.ts"],
+  exclude: ["node_modules", "dist"]
 };
