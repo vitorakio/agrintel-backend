@@ -1,13 +1,13 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common'
-import { FarmsService } from './farms.service'
-import { CreateFarmDto, UpdateFarmDto } from '../../dtos/farms.dto'
+import { SeasonsService } from './seasons.service'
+import { CreateSeasonDto, UpdateSeasonDto } from 'src/dtos/seasons.dto'
 
-@Controller('farms')
-export class FarmsController {
-  constructor(private readonly service: FarmsService) {}
+@Controller('seasons')
+export class SeasonsController {
+  constructor(private readonly service: SeasonsService) {}
 
   @Post()
-  create(@Body() dto: CreateFarmDto) {
+  create(@Body() dto: CreateSeasonDto) {
     return this.service.create(dto)
   }
 
@@ -22,10 +22,9 @@ export class FarmsController {
   }
 
   @Put(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateFarmDto) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateSeasonDto) {
     return this.service.update(id, dto)
   }
-
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {

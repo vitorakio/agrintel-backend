@@ -1,21 +1,21 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator'
 
 export class CreateFarmDto {
   @IsString()
   @IsNotEmpty()
-  name!: string;
+  name!: string
 
-  @IsOptional()
   @IsString()
-  location?: string;
+  @IsOptional()
+  location?: string
 }
 
 export class UpdateFarmDto {
-  @IsOptional()
   @IsString()
-  name?: string;
+  @IsOptional()
+  name?: string
 
-  @IsOptional()
   @IsString()
-  location?: string;
+  @IsOptional()
+  location?: string
 }

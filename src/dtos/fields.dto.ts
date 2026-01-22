@@ -1,45 +1,44 @@
-import { Type } from 'class-transformer';
-import {
-  IsInt,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Min,
-} from 'class-validator';
+import { Type } from 'class-transformer'
+import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Min } from 'class-validator'
 
 export class CreateFieldDto {
+  @IsInt()
+  @IsPositive()
+  farmId!: number
+
+  @IsInt()
+  @IsPositive()
+  @IsOptional()
+  areaId?: number
+
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string
 
-  @Type(() => Number)
-  @IsNumber({ maxDecimalPlaces: 10 })
-  @Min(0)
-  hectares!: number;
-
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  farmId!: number;
+  @IsNumber()
+  @IsPositive()
+  areaHa!: number
 }
 
 export class UpdateFieldDto {
-  @IsOptional()
-  @IsString()
-  name?: string;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsNumber({ maxDecimalPlaces: 10 })
-  @Min(0)
-  hectares?: number;
-
-  @IsOptional()
-  @Type(() => Number)
   @IsInt()
-  @Min(1)
-  farmId?: number;
+  @IsPositive()
+  @IsOptional()
+  farmId?: number
+
+  @IsInt()
+  @IsPositive()
+  @IsOptional()
+  areaId?: number
+
+  @IsString()
+  @IsOptional()
+  name?: string
+
+  @IsNumber()
+  @IsPositive()
+  @IsOptional()
+  areaHa?: number
 }
 
 export class FindAllFieldsQueryDto {
@@ -47,5 +46,11 @@ export class FindAllFieldsQueryDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  farmId?: number;
+  farmId?: number
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  areaId?: number
 }

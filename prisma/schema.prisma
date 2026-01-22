@@ -6,23 +6,173 @@ datasource db {
   provider = "postgresql"
 }
 
-model Farm {
-  id        Int      @id @default(autoincrement())
-  name      String
-  location  String?
-  createdAt DateTime @default(now())
+enum AreaUnit {
+  HA
+  ALQ
+}
 
-  fields    Field[]
+model Farm {
+  id        Int      @id @default(autoincrement()) @map("id")
+  name      String   @map("name")
+  location  String?  @map("location")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  areas   Area[]
+  fields  Field[]
+  seasons Season[]
+
+  @@unique([name], map: "uq_farms_name")
+  @@map("farms")
+}
+
+model Area {
+  id           Int      @id @default(autoincrement()) @map("id")
+  farmId       Int      @map("farm_id")
+  name         String   @map("name")
+
+  // Unidade padrão de cálculo (sempre HA)
+  areaHa       Float    @map("area_ha")
+
+  // Opcional: como o usuário informou (UX/auditoria)
+  originalUnit AreaUnit? @map("original_unit")
+  originalSize Float?    @map("original_size")
+
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  farm   Farm   @relation(fields: [farmId], references: [id])
+  fields Field[]
+
+  @@index([farmId], map: "idx_areas_farm_id")
+  @@unique([farmId, name], map: "uq_areas_farm_id_name")
+  @@map("areas")
 }
 
 model Field {
-  id        Int      @id @default(autoincrement())
-  name      String
-  hectares  Float
-  createdAt DateTime @default(now())
+  id        Int      @id @default(autoincrement()) @map("id")
+  farmId    Int      @map("farm_id")
+  areaId    Int?     @map("area_id")
+  name      String   @map("name")
 
-  farmId    Int
-  farm      Farm     @relation(fields: [farmId], references: [id])
+  // Unidade padrão de cálculo (sempre HA)
+  areaHa    Float    @map("area_ha")
 
-  @@index([farmId])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  farm   Farm  @relation(fields: [farmId], references: [id])
+  area   Area? @relation(fields: [areaId], references: [id])
+
+  seasons Season[]
+
+  @@index([farmId], map: "idx_fields_farm_id")
+  @@index([areaId], map: "idx_fields_area_id")
+  @@unique([farmId, name], map: "uq_fields_farm_id_name")
+  @@map("fields")
+}
+
+model Crop {
+  id        Int      @id @default(autoincrement()) @map("id")
+  name      String   @map("name") // "Soja"
+  code      String   @map("code") // "SOYBEAN"
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  seedVarieties SeedVariety[]
+  seasons       Season[]
+
+  @@unique([code], map: "uq_crops_code")
+  @@unique([name], map: "uq_crops_name")
+  @@map("crops")
+}
+
+model SeedVariety {
+  id        Int      @id @default(autoincrement()) @map("id")
+  cropId    Int      @map("crop_id")
+  name      String   @map("name")
+  brand     String?  @map("brand")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  crop     Crop     @relation(fields: [cropId], references: [id])
+  seasons  Season[]
+  harvests Harvest[]
+
+  @@index([cropId], map: "idx_seed_varieties_crop_id")
+  @@unique([cropId, name], map: "uq_seed_varieties_crop_id_name")
+  @@map("seed_varieties")
+}
+
+model Season {
+  id            Int      @id @default(autoincrement()) @map("id")
+
+  farmId        Int      @map("farm_id")
+  fieldId       Int?     @map("field_id")
+  cropId        Int      @map("crop_id")
+  seedVarietyId Int?     @map("seed_variety_id")
+
+  name          String?  @map("name")
+  startDate     DateTime @map("start_date")
+  endDate       DateTime @map("end_date")
+
+  productivityScHa Float? @map("productivity_sc_ha")
+  areaHaOverride   Float? @map("area_ha_override")
+
+  region        String?  @map("region")
+
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  farm        Farm         @relation(fields: [farmId], references: [id])
+  field       Field?       @relation(fields: [fieldId], references: [id])
+  crop        Crop         @relation(fields: [cropId], references: [id])
+  seedVariety SeedVariety? @relation(fields: [seedVarietyId], references: [id])
+
+  harvests Harvest[]
+  prices   MarketPrice[]
+
+  @@index([farmId], map: "idx_seasons_farm_id")
+  @@index([fieldId], map: "idx_seasons_field_id")
+  @@index([cropId], map: "idx_seasons_crop_id")
+  @@index([startDate, endDate], map: "idx_seasons_start_end")
+  @@map("seasons")
+}
+
+model Harvest {
+  id            Int      @id @default(autoincrement()) @map("id")
+  seasonId      Int      @map("season_id")
+  seedVarietyId Int?     @map("seed_variety_id")
+
+  name          String?  @map("name")
+  harvestDate   DateTime @map("harvest_date")
+  yieldSc       Float?   @map("yield_sc")
+
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  season      Season       @relation(fields: [seasonId], references: [id])
+  seedVariety SeedVariety? @relation(fields: [seedVarietyId], references: [id])
+
+  @@index([seasonId], map: "idx_harvests_season_id")
+  @@index([harvestDate], map: "idx_harvests_harvest_date")
+  @@map("harvests")
+}
+
+model MarketPrice {
+  id           Int      @id @default(autoincrement()) @map("id")
+  seasonId     Int      @map("season_id")
+  date         DateTime @map("date")
+  pricePerSack Float    @map("price_per_sack")
+  source       String?  @map("source")
+  region       String?  @map("region")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  season Season @relation(fields: [seasonId], references: [id])
+
+  @@index([seasonId], map: "idx_market_prices_season_id")
+  @@index([date], map: "idx_market_prices_date")
+  @@map("market_prices")
 }
